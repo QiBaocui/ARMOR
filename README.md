@@ -1,2 +1,2 @@
 # ARMOR
-ARMOR Project 
+This project presents a versatile and extensible machine learning pipeline for Antimicrobial Resistance (AMR) prediction based on WGS data. Designed as a universal framework, it provides end-to-end scripts for genomic feature extraction (genes, SNPs, k-mers), customized model training, and feature-importance analysis. Users can easily adapt this framework to predict resistance phenotypes for various antibiotics and uncover underlying resistance mechanisms. 
