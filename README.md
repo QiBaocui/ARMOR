@@ -1,22 +1,8 @@
 # ARMOR
 
-**A**ntibiotic **R**esistance prediction using **M**achine learning with **O**mics data
+A comprehensive pipeline for predicting antibiotic resistance phenotypes in bacteria using whole-genome sequencing (WGS) data and machine learning.
 
-A comprehensive pipeline for predicting antibiotic resistance phenotypes in *Escherichia coli* using whole-genome sequencing (WGS) data and machine learning.
-
-## Author Information
-
-**Authors:** Fang Wan^1,#^, Wanning Tong^2,#^, Weiwei Wu^3,#^, Jia Liu^3^, Hao Huang^3^, Pei Zhang^1,\*^, Wenqing Jiang^4,\*^
-
-**Affiliations:**
-1. [Affiliation 1]
-2. [Affiliation 2]
-3. [Affiliation 3]
-4. [Affiliation 4]
-
-**Correspondence:**
-- Pei Zhang: [email]
-- Wenqing Jiang: [email]
+## 
 
 ## Features
 
@@ -168,51 +154,57 @@ ARMOR/
 ARMOR consists of four major components:
 
 1. **Feature Generation**
+   
    - Gene presence/absence from pangenome analysis (Bakta + Panaroo)
    - Core genome SNPs (Snippy + Gubbins)
    - K-mer frequencies (Jellyfish/KMC)
 
 2. **Feature Selection**
+   
    - Between-group difference strategy: Score = |PR - PS|
    - Statistical filtering: Chi-square p < 0.05, OR > 2
    - Top N feature selection (default: 1000)
 
 3. **Model Training**
+   
    - Multiple algorithms: GBM, GLM, RF, DL
    - Cross-validation (default: 10-fold)
    - Stacked ensemble for optimal performance
 
 4. **Evaluation & Visualization**
+   
    - AUC, sensitivity, specificity, accuracy, F1 score
    - ROC curves and performance heatmaps
    - Feature importance analysis
 
 ## Feature Types
 
-| Feature Type | Method | Dimensions | Description |
-|--------------|--------|------------|-------------|
-| Gene | Bakta + Panaroo | ~3000-5000 genes | Presence/absence of genes |
-| SNP | Snippy + Gubbins | ~10000-50000 SNPs | Core genome polymorphisms |
-| K-mer | Jellyfish/KMC | ~100000-500000 k-mers | 11-mer frequency profiles |
+| Feature Type | Method           | Dimensions            | Description               |
+| ------------ | ---------------- | --------------------- | ------------------------- |
+| Gene         | Bakta + Panaroo  | ~3000-5000 genes      | Presence/absence of genes |
+| SNP          | Snippy + Gubbins | ~10000-50000 SNPs     | Core genome polymorphisms |
+| K-mer        | Jellyfish/KMC    | ~100000-500000 k-mers | 11-mer frequency profiles |
 
 ## Machine Learning Algorithms
 
-| Algorithm | H2O Function | Description |
-|-----------|--------------|-------------|
-| GBM | `h2o.gbm()` | Gradient Boosting Machine |
-| GLM | `h2o.glm()` | Generalized Linear Model (Elastic Net) |
-| RF | `h2o.randomForest()` | Random Forest |
-| DL | `h2o.deeplearning()` | Deep Neural Network |
-| Stacked | `h2o.stackedEnsemble()` | Ensemble of all above |
+| Algorithm | H2O Function            | Description                            |
+| --------- | ----------------------- | -------------------------------------- |
+| GBM       | `h2o.gbm()`             | Gradient Boosting Machine              |
+| GLM       | `h2o.glm()`             | Generalized Linear Model (Elastic Net) |
+| RF        | `h2o.randomForest()`    | Random Forest                          |
+| DL        | `h2o.deeplearning()`    | Deep Neural Network                    |
+| Stacked   | `h2o.stackedEnsemble()` | Ensemble of all above                  |
 
 ## Evaluation Metrics
 
 ### Read-level (Classification)
+
 - **Precision**: TP / (TP + FP)
 - **Recall (Sensitivity)**: TP / (TP + FN)
 - **F1-score**: Harmonic mean of Precision and Recall
 
 ### Profile-level (Prediction)
+
 - **AUC**: Area under ROC curve
 - **Specificity**: TN / (TN + FP)
 - **Accuracy**: (TP + TN) / (TP + TN + FP + FN)
