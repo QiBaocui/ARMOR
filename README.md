@@ -219,28 +219,4 @@ Based on the manuscript results:
 4. **Beta-lactams** show heterogeneity, with AMX/CLA having lowest AUC
 5. **40 core resistance genes** identified with high concordance to known mechanisms
 
-## Citation
-
-If you use ARMOR in your research, please cite:
-
-```bibtex
-@article{wan2026armor,
-  title={Utilizing Whole Genome Sequencing Data for Machine Learning Driven Prediction of Antibiotic Resistance in Escherichia coli},
-  author={Wan, Fang and Tong, Wanning and Wu, Weiwei and Liu, Jia and Huang, Hao and Zhang, Pei and Jiang, Wenqing},
-  journal={bioRxiv},
-  year={2026}
-}
-```
-
-## License
-
-MIT License
-
-## Funding
-
-This work was supported by [Funding Agency], grant number [XXX].
-
-## Contact
-
-- Bug reports: GitHub Issues
-- Collaboration: [email]
+## 
