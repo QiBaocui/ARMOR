@@ -1,0 +1,96 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "armor"
+version = "1.0.0"
+description = "Antibiotic Resistance prediction using Machine learning with Omics data"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Fang Wan", email = "wanfang@example.com"},
+    {name = "Wanning Tong", email = "tongwn@example.com"},
+    {name = "Weiwei Wu", email = "wuww@example.com"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "numpy>=1.20.0",
+    "pandas>=1.3.0",
+    "scipy>=1.7.0",
+    "scikit-learn>=1.0.0",
+    "matplotlib>=3.4.0",
+    "seaborn>=0.11.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.62.0",
+    "click>=8.0.0",
+    "loguru>=0.7.0",
+]
+
+[project.optional-dependencies]
+h2o = [
+    "h2o>=3.40.0",
+]
+bio = [
+    "biopython>=1.79",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+all = [
+    "armor[h2o,bio,test]",
+]
+
+[project.scripts]
+armor-generate = "src.generate_features:main"
+armor-select = "src.feature_selection:main"
+armor-train = "src.train_models:main"
+armor-evaluate = "src.evaluate:main"
+armor-visualize = "src.visualize:main"
+armor-predict = "src.predict:main"
+
+[project.urls]
+Homepage = "https://github.com/your-org/ARMOR"
+Documentation = "https://github.com/your-org/ARMOR#readme"
+Repository = "https://github.com/your-org/ARMOR.git"
+Issues = "https://github.com/your-org/ARMOR/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+addopts = "-v --cov=src --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

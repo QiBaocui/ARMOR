@@ -1,0 +1,221 @@
+# ==============================================================================
+# ARMOR Pipeline Configuration Example
+# ==============================================================================
+# This file provides example configurations for different analysis scenarios.
+# Copy and modify the relevant section for your analysis.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Scenario 1: Full Analysis with All Feature Types
+# ------------------------------------------------------------------------------
+# Use this for comprehensive analysis with gene, SNP, and k-mer features
+
+FULL_ANALYSIS_CONFIG="
+--outdir           results_full
+--group            group_data.txt
+--gene             gene_matrix.txt
+--snp              SNP_matrix.txt
+--kmer             kmer_matrix.txt
+--trainNum         0.6
+--split_type       proportional
+--nfolds           10
+--algorithms       GBM,GLM,RF,DL,stacked
+--seed             42
+--nthreads         -1
+"
+
+# ------------------------------------------------------------------------------
+# Scenario 2: Gene-Only Analysis (Fastest)
+# ------------------------------------------------------------------------------
+# Use this for quick analysis or when only gene data is available
+
+GENE_ONLY_CONFIG="
+--outdir           results_gene
+--group            group_data.txt
+--gene             gene_matrix.txt
+--snp              SNP_matrix.txt
+--kmer             kmer_matrix.txt
+--gene-only
+--trainNum         0.6
+--split_type       proportional
+--nfolds           5
+--algorithms       GBM,RF,stacked
+--seed             42
+"
+
+# ------------------------------------------------------------------------------
+# Scenario 3: Cross-Validation with Multiple Runs
+# ------------------------------------------------------------------------------
+# Use this for robust performance estimation
+
+CV_CONFIG="
+# Run multiple times with different seeds
+SEEDS=(1 42 123 456 789)
+
+for seed in "${SEEDS[@]}"; do
+  Rscript basic_analyse.R \
+    --outdir results_cv/seed_${seed} \
+    --group group_data.txt \
+    --gene gene_matrix.txt \
+    --snp SNP_matrix.txt \
+    --kmer kmer_matrix.txt \
+    --seed ${seed} \
+    --nfolds 10
+done
+
+# Then aggregate results
+Rscript scripts/08_compare_models.R \
+  --input results_cv \
+  --outdir results_cv/summary
+"
+
+# ------------------------------------------------------------------------------
+# Scenario 4: Feature Selection Analysis
+# ------------------------------------------------------------------------------
+# Use this to identify top predictive features
+
+FEATURE_SELECTION_CONFIG="
+# Select top 1000 features
+Rscript scripts/04_feature_selection.R \
+  --input gene_matrix.txt \
+  --group group_data.txt \
+  --outdir features_selected \
+  --top-n 1000 \
+  --p-threshold 0.05 \
+  --or-threshold 2.0 \
+  --min-presence 0.01 \
+  --max-presence 0.99
+
+# Use selected features for modeling
+# (Modify basic_analyse.R input to use selected_feature_matrix.txt)
+"
+
+# ------------------------------------------------------------------------------
+# Scenario 5: Antibiotic-Specific Analysis
+# ------------------------------------------------------------------------------
+# Run separate analyses for each antibiotic
+
+ANTIBIOTIC_SPECIFIC_CONFIG="
+# Define antibiotics
+ANTIBIOTICS=(FEP TOB FOX CRO GEN TET CAZ CIP AMX_AMP)
+
+for abx in "${ANTIBIOTICS[@]}"; do
+  # Create antibiotic-specific group file
+  grep -E \"^ID|${abx}\" group_all.txt > group_${abx}.txt
+
+  # Run analysis
+  Rscript basic_analyse.R \
+    --outdir results_${abx} \
+    --group group_${abx}.txt \
+    --gene gene_matrix.txt \
+    --snp SNP_matrix.txt \
+    --kmer kmer_matrix.txt \
+    --seed 42
+done
+
+# Compare results across antibiotics
+Rscript scripts/08_compare_models.R \
+  --input ./ \
+  --outdir results_comparison
+"
+
+# ------------------------------------------------------------------------------
+# Scenario 6: Predict New Samples
+# ------------------------------------------------------------------------------
+# Use trained models to predict resistance in new isolates
+
+PREDICTION_CONFIG="
+# Predict using gene-based model
+Rscript scripts/09_predict_new_samples.R \
+  --input new_samples_gene_matrix.txt \
+  --model results/Gene_stacked_model/ \
+  --outdir predictions_new \
+  --type Gene
+
+# Predict using combined model
+Rscript scripts/09_predict_new_samples.R \
+  --input new_samples_all_matrix.txt \
+  --model results/All_stacked_model/ \
+  --outdir predictions_new_all \
+  --type All
+"
+
+# ------------------------------------------------------------------------------
+# Scenario 7: Generate Publication Figures
+# ------------------------------------------------------------------------------
+# Create high-quality figures for manuscript
+
+FIGURE_CONFIG="
+# Generate all figures
+Rscript scripts/06_visualization.R \
+  --input results \
+  --outdir figures_publication \
+  --dpi 300 \
+  --theme bw \
+  --prefix \"fig\"
+
+# Additional statistical analysis
+Rscript scripts/07_statistical_analysis.R \
+  --input gene_matrix.txt \
+  --group group_data.txt \
+  --outdir stats_figures \
+  --p-adjust BH \
+  --or-threshold 2.0 \
+  --top-n 50
+"
+
+# ------------------------------------------------------------------------------
+# Scenario 8: Resource-Constrained Environment
+# ------------------------------------------------------------------------------
+# For systems with limited memory or CPU
+
+LOW_RESOURCE_CONFIG="
+Rscript basic_analyse.R \
+  --outdir results_lite \
+  --group group_data.txt \
+  --gene gene_matrix.txt \
+  --snp SNP_matrix.txt \
+  --kmer kmer_matrix.txt \
+  --trainNum 0.6 \
+  --nfolds 5 \
+  --algorithms GBM,RF \
+  --nthreads 4 \
+  --ip 54321
+
+# Note: H2O will automatically adjust memory usage
+# You can also set: --min_mem_size 4G --max_mem_size 8G
+"
+
+# ==============================================================================
+# File Format Reference
+# ==============================================================================
+
+# Group File Format:
+# ID    Group
+# SAMPLE001    R
+# SAMPLE002    S
+# (R = Resistant, S = Susceptible)
+
+# Feature Matrix Format:
+# ID    Feature1    Feature2    Feature3    ...
+# SAMPLE001    1    0    1    ...
+# SAMPLE002    0    0    1    ...
+# (Binary: 1 = present, 0 = absent; or continuous values for k-mers)
+
+# ==============================================================================
+# Common Issues and Solutions
+# ==============================================================================
+
+# Issue: H2O runs out of memory
+# Solution: Reduce --nthreads, use feature selection, or increase --max_mem_size
+
+# Issue: Too many features causing long training times
+# Solution: Use scripts/04_feature_selection.R to reduce feature count
+
+# Issue: Class imbalance
+# Solution: Use --split_type sample_size for balanced training sets
+
+# Issue: Model performance varies between runs
+# Solution: Set --seed for reproducibility, increase --nfolds
+
+# ==============================================================================

@@ -1,0 +1,81 @@
+# ARMOR Pipeline Configuration
+# ==============================
+
+# Data paths
+data:
+  group_file: null  # Required: Sample group/phenotype file
+  gene_matrix: null  # Required: Gene presence/absence matrix
+  snp_matrix: null  # Required: SNP matrix
+  kmer_matrix: null  # Required: K-mer frequency matrix
+
+# Feature generation settings
+feature_generation:
+  threads: 8
+  kmer_size: 11
+  reference_fasta: null
+  reference_gff: null
+
+  # Presence filtering for k-mers
+  min_presence: 0.01
+  max_presence: 0.99
+
+# Feature selection settings
+feature_selection:
+  top_n: 1000
+  p_threshold: 0.05
+  or_threshold: 2.0
+  min_presence: 0.01
+  max_presence: 0.99
+
+# Model training settings
+training:
+  # Data splitting
+  train_ratio: 0.6
+  split_type: proportional  # or "sample_size"
+  seed: 42
+
+  # Cross-validation
+  nfolds: 10
+
+  # H2O settings
+  h2o:
+    port: 54321
+    nthreads: -1  # -1 for all available
+    min_mem_size: "8G"
+    max_mem_size: "32G"
+
+  # Algorithms to train
+  algorithms:
+    - GBM
+    - GLM
+    - RF
+    - DL
+    # - xGboost
+    # - Bayes
+
+# Output settings
+output:
+  results_dir: results
+  figures_dir: figures
+  models_dir: models
+
+  # File formats
+  save_models: true
+  save_predictions: true
+  save_roc_data: true
+  save_variable_importance: true
+
+  # Plot settings
+  dpi: 300
+  plot_format: png  # or "pdf", "both"
+
+# Antibiotic-specific settings (optional)
+antibiotics:
+  # Override settings for specific antibiotics
+  # Example:
+  # AMP:
+  #   train_ratio: 0.5  # More balanced for imbalanced datasets
+  #   algorithms:
+  #     - GBM
+  #     - RF
+  pass
